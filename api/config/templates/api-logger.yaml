@@ -1,0 +1,16 @@
+# log level, 默认为info, 可选值为debug|info|warning|error, 等级依次增加
+level: info
+
+#logger配置，可配置多个
+loggers:
+  #type: 类型，各类型支持不同的配置项。目前支持配置"standard"
+
+  #standard 配置项
+  # standard默认为本地文件日志
+  # path: string, 必须
+  # rotate: bool(默认为true)
+  # rotateSize: string(默认为10M)
+  # log-level: 与全局log-level一致，覆盖全局设置
+  - type: standard
+    path: logs/api.log
+    level: debug
