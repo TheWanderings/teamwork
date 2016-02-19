@@ -14,7 +14,7 @@ from logs import LoggerFactory
 
 tornado.options.define('port', 
                        default=10000, 
-                       help='run server on specific port, the default is set in the config file', 
+                       help='run server on specific port.', 
                        type=int
                        )
 
