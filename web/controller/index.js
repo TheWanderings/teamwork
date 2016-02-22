@@ -9,8 +9,12 @@ angular.module("teamworkConsole",
 .config(function($routeProvider, $locationProvider) {
   $routeProvider
   .when("/entrance", {
-    templateUrl: "view/partial/entrance.html",
+    templateUrl: "view/pages/entrance.html",
     controller: "entrance",
+  })
+  .when("/login", {
+    templateUrl: "view/pages/login.html",
+    controller: "login",
   })
   .when("/", {
     redirectTo: "/entrance",

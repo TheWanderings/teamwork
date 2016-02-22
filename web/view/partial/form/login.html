@@ -1,0 +1,32 @@
+<form ng-controller="loginForm" name="loginForm" role="form" ng-submit="login()" class="form-horizontal">
+<div class="form-group">
+  <label class="col-md-2 control-label">{{ 'email' | translate }}</label>
+  <div class="col-md-6">
+    <input name="email" type="email" required class="form-control"
+      ng-model="formData.email">
+  </div>
+  <div class="col-md-4 form-error">
+    <span ng-show="loginForm.email.$error.required">{{ 'errorRequired' | translate }}</span>
+    <span ng-show="loginForm.email.$error.email">{{ 'errorEmail' | translate }}</span>
+  </div>
+</div>
+<div class="form-group">
+  <label class="col-md-2 control-label">{{ 'password' | translate }}</label>
+  <div class="col-md-6">
+    <input name="password" type="password" required class="form-control"
+      ng-model="formData.password">
+  </div>
+  <div class="col-md-4 form-error">
+    <span ng-show="loginForm.password.$error.required">{{ "errorRequired" | translate }}</span>
+  </div>
+</div>
+<div class="form-group">
+  <div class="col-md-offset-4 col-md-2">
+    <input type="submit" class="btn btn-default" value="{{ 'signIn' | translate }}"
+    ng-disabled="loginForm.$invalid">
+  </div>
+  <div class="col-md-2">
+    <a href="#/register" class="btn btn-default">{{ 'signUp' | translate }}</a>
+  </div>
+</div>
+</form>

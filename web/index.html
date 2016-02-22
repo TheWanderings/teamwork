@@ -3,7 +3,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="http://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="thirdparty/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="view/style/common.css" rel="stylesheet">
+
+    <script src="tools/stringUtils.js"></script>
+
     <script src="thirdparty/node_modules/angular/angular.js"></script>
     <script src="thirdparty/node_modules/angular-route/angular-route.js"></script>
     <script src="thirdparty/node_modules/angular-translate/dist/angular-translate.js"></script>
@@ -11,12 +15,18 @@
 
     <script src="controller/index.js"></script>
 
-    <script src="controller/configure.js"></script>
-    <script src="controller/entrance.js"></script>
-    <script src="controller/userservice.js"></script>
+    <script src="controller/service/configure.js"></script>
+    <script src="controller/service/userservice.js"></script>
+
+    <script src="controller/pages/entrance.js"></script>
+    <script src="controller/pages/login.js"></script>
+
+    <script src="controller/form/login.js"></script>
 </head>
 <body ng-app="teamworkConsole">
-  <div ng-view></div>
+  <div class="container">
+    <div ng-view></div>
+  </div>
 </body>
 </html>
 
