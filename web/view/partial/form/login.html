@@ -8,6 +8,7 @@
   <div class="col-md-4 form-error">
     <span ng-show="loginForm.email.$error.required">{{ 'errorRequired' | translate }}</span>
     <span ng-show="loginForm.email.$error.email">{{ 'errorEmail' | translate }}</span>
+    <span ng-show="error.account">{{ error.account | translate }}</span>
   </div>
 </div>
 <div class="form-group">
@@ -18,6 +19,7 @@
   </div>
   <div class="col-md-4 form-error">
     <span ng-show="loginForm.password.$error.required">{{ "errorRequired" | translate }}</span>
+    <span ng-show="error.password">{{ error.password | translate }}</span>
   </div>
 </div>
 <div class="form-group">

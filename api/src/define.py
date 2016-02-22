@@ -12,7 +12,11 @@ root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # 以下是常量，提供统一管理，方便语言本地化
 
 # Error code
-C_EC_AUTH = "ecAuth"
+C_EC_auth = "authError"
+C_EC_wrongPassword = "wrongPassword"
+C_EC_userMissing = "userMissing"
 
 # Error cause
-C_CAUSE_cookieMissing = "cookieMissing"
+C_CAUSE_userMissing = "userMissing"
+C_CAUSE_wrongPassword = "wrongPassword"
+C_CAUSE_authError = "authError"

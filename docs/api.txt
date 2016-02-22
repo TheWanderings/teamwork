@@ -4,6 +4,11 @@
   3. 错误返回状态码除500及以上外，body中传递格式为{"error": "string code", "cause": "string"}
   4. 无特殊说明，返回数据为json格式
 
+错误码:
+    authError: 验证token失败
+    wrongPassword
+    userMissing: 没有该用户
+
 
 一、账户相关
   1.1 登陆:
