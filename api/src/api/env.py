@@ -1,4 +1,4 @@
-#coding: utf-8
+# coding: utf-8
 '''
 Created on 2016年2月18日
 
@@ -11,8 +11,9 @@ import config
 import logs
 import yaml
 
+
 def init():
     config.ConfigMgr.init(os.path.join(define.root, "config/api.yaml"))
-    with file(os.path.join(define.root, "config/api-logger.yaml"), 'r') as s:
+    with open(os.path.join(define.root, "config/api-logger.yaml"), 'r') as s:
         c = yaml.load(s)
-        logs.LoggerFactory.init(define.root, c)
+        logs.LoggerMgr.init(define.root, c)

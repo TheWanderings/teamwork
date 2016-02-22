@@ -1,2 +1,2 @@
 from .exceptions import *
-from .logger_factory import *
+from logs.logger_mgr import *

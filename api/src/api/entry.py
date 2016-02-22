@@ -10,7 +10,7 @@ import env
 from config import ConfigMgr
 
 from .entries import entries
-from logs import LoggerFactory
+from logs import LoggerMgr
 
 tornado.options.define('port', 
                        default=10000, 
@@ -22,7 +22,7 @@ tornado.options.parse_command_line()
 
 env.init()
 
-logger = LoggerFactory.getLogger()
+logger = LoggerMgr.getLogger()
 
 
 if __name__ == '__main__':
