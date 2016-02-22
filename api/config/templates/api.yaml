@@ -1,2 +1,6 @@
 # secure cookie secret.
 cookie_secret: TODO
+
+redis:
+    host: localhost
+    port: 6379

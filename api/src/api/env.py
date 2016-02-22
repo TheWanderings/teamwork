@@ -10,6 +10,7 @@ import define
 import config
 import logs
 import yaml
+import cache
 
 
 def init():
@@ -17,3 +18,10 @@ def init():
     with open(os.path.join(define.root, "config/api-logger.yaml"), 'r') as s:
         c = yaml.load(s)
         logs.LoggerMgr.init(define.root, c)
+    redisConfig = config.ConfigMgr.get("redis", 
+                                       {
+                                            "host": "localhost",
+                                            "port": 6379,
+                                        })
+    cacheMgr = cache.RedisCacheMgr(**redisConfig)
+    
