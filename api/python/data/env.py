@@ -25,3 +25,7 @@ def init():
                                         })
     cacheMgr = cache.RedisCacheMgr(**redisConfig)
     
+    
+def finish():
+    logger = logs.LoggerMgr.getLogger()
+    logger.info("finish now")

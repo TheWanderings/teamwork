@@ -33,4 +33,9 @@ if __name__ == '__main__':
     application = tornado.web.Application(entries, **settings)
     logger.info("Start server at %d", options.port)
     application.listen(options.port)
-    tornado.ioloop.IOLoop.current().start()
+    try:
+        tornado.ioloop.IOLoop.current().start()
+    except KeyboardInterrupt:
+        logger.debug("CTRL-C occurs")
+    finally:
+        env.finish()
