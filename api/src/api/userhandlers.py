@@ -19,7 +19,7 @@ class LoginHandler(BaseHandler):
     def post(self):
         email = self.get_argument("email")
         password = self.get_argument("password")
-        raise CustomHTTPError(401,
-                              define.C_EC_wrongPassword,
-                              cause=define.C_CAUSE_userMissing
-                              )
+        # raise CustomHTTPError(401,
+        #                       define.C_EC_wrongPassword,
+        #                       cause=define.C_CAUSE_userMissing
+        #                       )

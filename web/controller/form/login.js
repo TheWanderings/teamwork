@@ -30,6 +30,7 @@ angular.module("teamworkConsole")
     ConfigService.wrappedHttp(req)
     .then(function(response) {
       console.log(response);
+      console.log("redirect to: " + next);
       $location.path(next).search({});
     })
     .catch(function(response) {
