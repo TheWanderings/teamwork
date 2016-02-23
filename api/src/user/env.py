@@ -14,8 +14,8 @@ import cache
 
 
 def init():
-    config.ConfigMgr.init(os.path.join(define.root, "config/api.yaml"))
-    with open(os.path.join(define.root, "config/api-logger.yaml"), 'r') as s:
+    config.ConfigMgr.init(os.path.join(define.root, "config/user.yaml"))
+    with open(os.path.join(define.root, "config/user-logger.yaml"), 'r') as s:
         c = yaml.load(s)
         logs.LoggerMgr.init(define.root, c)
     redisConfig = config.ConfigMgr.get("redis", 

@@ -23,13 +23,13 @@ angular.module("teamworkConsole")
           defer.resolve(svc.me);
         },
         function(response) {
-          defer.reject(response);
           console.log(response);
           if (response.status === 401) {
             var next = $location.path();
             if (next !== "/login")
               $location.path("/login").search({next: next});
           }
+          defer.reject(response);
         })
       })
       .catch(function(res) {

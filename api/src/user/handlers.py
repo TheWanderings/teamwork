@@ -6,7 +6,7 @@ Created on 2016年2月18日
 '''
 import tornado.web
 import define
-from .basehandler import BaseHandler, CustomHTTPError
+from api.basehandler import BaseHandler, CustomHTTPError
 
 
 class SelfHandler(BaseHandler):

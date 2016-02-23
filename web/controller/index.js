@@ -16,6 +16,10 @@ angular.module("teamworkConsole",
     templateUrl: "view/pages/login.html",
     controller: "login",
   })
+  .when("/signup", {
+    templateUrl: "view/pages/signup.html",
+    controller: "signup",
+  })
   .when("/", {
     redirectTo: "/entrance",
   });

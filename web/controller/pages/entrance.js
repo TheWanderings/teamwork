@@ -7,7 +7,9 @@ angular.module("teamworkConsole")
     console.log(me);
   })
   .catch(function(res) {
-    console.log(res);
+    if (res.status >= 500) {
+      alert("server error.");
+    }
   });
 })
 ;
