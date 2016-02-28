@@ -1,7 +1,7 @@
 "use strict";
 
-angular.module("teamworkConsole")
-.service("ConfigService", function($http, $q){
+
+module.exports = function($http, $q){
   this.configs = null;
   var svc = this;
   this.getConfigs = function() {
@@ -49,5 +49,5 @@ angular.module("teamworkConsole")
     });
     return defer.promise;
   };
-})
+}
 ;
