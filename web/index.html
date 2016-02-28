@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" ng-app="teamworkWeb">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="thirdparty/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="view/style/common.css" rel="stylesheet">
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="dist/bundle.js"></script>
+    <!-- <link href="view/style/common.css" rel="stylesheet">
 
     <script src="tools/stringUtils.js"></script>
 
@@ -21,12 +22,9 @@
     <script src="controller/pages/entrance.js"></script>
     <script src="controller/pages/login.js"></script>
 
-    <script src="controller/form/login.js"></script>
+    <script src="controller/form/login.js"></script> -->
 </head>
-<body ng-app="teamworkConsole">
-  <div class="container">
-    <div ng-view></div>
-  </div>
+<body ng-view>
 </body>
 </html>
 

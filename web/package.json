@@ -1,0 +1,26 @@
+{
+  "name": "console",
+  "version": "1.0.0",
+  "description": "Console pages for teamwork.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ailen Zou",
+  "license": "ISC",
+  "dependencies": {
+    "angular": "^1.5.0",
+    "angular-route": "^1.5.0",
+    "angular-translate": "^2.9.2",
+    "angular-ui-bootstrap": "^1.2.1",
+    "babel": "^6.5.2",
+    "babel-core": "^6.5.2",
+    "babel-loader": "^6.2.4",
+    "bootstrap": "^3.3.6",
+    "css-loader": "^0.23.1",
+    "less-loader": "^2.2.2",
+    "ng-annotate": "^1.2.1",
+    "raw-loader": "^0.5.1",
+    "style-loader": "^0.13.0"
+  }
+}

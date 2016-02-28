@@ -1,7 +1,7 @@
 "use strict";
 
-var angular = require("angular");
-var ngRoute = require("angular-route");
+require("angular");
+require("angular-route");
 
 var app = angular.module("teamworkConsole",
                          [
