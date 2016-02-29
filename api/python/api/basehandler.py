@@ -22,6 +22,7 @@ class BaseHandler(tornado.web.RequestHandler):
         cookie = self.get_secure_cookie(self.C_COOKIE)
         if not cookie:
             raise CustomHTTPError(401, define.C_EC_auth, cause=define.C_CAUSE_cookieMissing)
+        # TODO
     
     def write_error(self, status_code, **kwargs):
         if status_code >= 500:

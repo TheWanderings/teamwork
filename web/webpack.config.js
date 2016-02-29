@@ -1,4 +1,5 @@
 var path = require("path");
+var webpack = require("webpack");
 
 module.exports = {
     /*entry — name of the top level file or 
@@ -53,4 +54,21 @@ module.exports = {
             }
         ]
     },
+    /*
+        插件完成webpack本身没有的功能
+    */
+    plugins: [
+        //使用丑化js插件
+        /*--optimize-minimize*/
+        new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                warnings: false
+            },
+            mangle: {
+                except: ['$scope', '$']
+            }
+        }),
+        /*--optimize-dedupe, 去重*/
+        new webpack.optimize.DedupePlugin(),
+    ]
 }
