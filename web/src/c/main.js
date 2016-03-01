@@ -15,8 +15,8 @@ var app = angular.module("teamworkWeb",
                          ]);
 
 app
-.service('ConfigService', require("./service/configure"))
-.service('UserService', require("./service/userservice"))
+.service('ConfigService', require("../m/service/configure"))
+.service('UserService', require("../m/service/userservice"))
 .controller('entrance', require("./pages/entrance"))
 .controller("login", require("./pages/login"))
 /* forms */
