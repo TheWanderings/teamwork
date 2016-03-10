@@ -1,6 +1,7 @@
 # secure cookie secret.
 cookie_secret: TODO
 
-redis:
+cache:
+    type: redis
     host: localhost
     port: 6379

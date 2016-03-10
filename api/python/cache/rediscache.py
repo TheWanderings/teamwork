@@ -4,12 +4,14 @@ Created on 2015年12月11日
 
 @author: AilenZou
 '''
-from .cachemgr import CacheMgr
+from .cache import Cache
 import pickle
 import redis
 
 
-class RedisCacheMgr(CacheMgr):
+class RedisCache(Cache):
+    __inst = None
+    
     def __init__(self, timeoutSecond=0, **configs):
         self.__timeout = timeoutSecond
         self.__redisClient = redis.StrictRedis(**configs)
