@@ -6,8 +6,8 @@ Created on 2016年2月16日
 '''
 
 class UnimplementedError(Exception):
-  pass
+    pass
 
 
 class UnknownKeyError(Exception):
-  pass
+    pass

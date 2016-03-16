@@ -21,7 +21,7 @@ class LoggerMgr(object):
     @classmethod
     def init(cls, root, configs):
         defaultLevel = configs.get("level", "INFO")
-        f = "%(levelname)s-%(asctime)s-%(filename)s-%(lineno)d-%(funcName)s: %(message)s"
+        f = "%(levelname)s-%(asctime)s-%(filename)s-%(lineno)d-%(funcName)s[%(thread)d]: %(message)s"
         defaultFormat = configs.get("format", f)
         defaultFmtter = logging.Formatter(defaultFormat)
         logger = logging.getLogger(cls.C_LOGGER_NAME)
