@@ -18,15 +18,11 @@ def init():
     with open(os.path.join(define.root, "config/user-logger.yaml"), 'r') as s:
         c = yaml.load(s)
         logs.LoggerMgr.init(define.root, c)
-#     redisConfig = config.ConfigMgr.get("redis", 
-#                                        {
-#                                             "host": "localhost",
-#                                             "port": 6379,
-#                                         })
-#     cacheMgr = cache.RedisCacheMgr(**redisConfig)
+    logger = logs.LoggerMgr.getLogger()
     cacheConfig = config.ConfigMgr.get("cache", None)
     if cacheConfig is not None:
-        cache.CacheMgr.init(**cacheConfig)
+        # 设置了缓存
+        cache.CacheMgr.init(logger, **cacheConfig)
     
 
 def finish():
