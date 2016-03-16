@@ -1,9 +1,15 @@
-##部署方法:
+## 部署方法:
 
 > sudo pip install -r requirements.txt
   
-###运行方法:(配置由../config下文件提供)
+### 运行方法:
+**配置参考[config](../config/)**
 
-- User模块:
+### 服务列表及运行方式
+- User服务:
 
-> python -m user.entry
+> python -m user.main
+
+- data服务:
+
+> python -m data.main

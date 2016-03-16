@@ -31,6 +31,9 @@ class LoggerMgr(object):
                 filePath = cfg["path"]
                 if not filePath.startswith("/"):
                     filePath = os.path.join(root, filePath)
+                dirPath = os.path.dirname(filePath)
+                if not os.path.exists(dirPath):
+                    os.mkdir(dirPath)
                 hdlr = logging.FileHandler(filePath)
                 fmt = defaultFmtter
                 if cfg.get("format", None) is not None:

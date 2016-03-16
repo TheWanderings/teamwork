@@ -1,5 +1,7 @@
-使用(部署)方法:
+**后台管理入口**
 
-npm install --no-bin-links
+## 打包方法:
 
-webpack (打包)
+> npm install --no-bin-links
+> 
+> webpack (打包)
