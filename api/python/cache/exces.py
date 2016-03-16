@@ -7,3 +7,7 @@ Created on 2016年3月10日
 
 class UnsupportedError(Exception):
     pass
+
+
+class UninitializedError(Exception):
+    pass

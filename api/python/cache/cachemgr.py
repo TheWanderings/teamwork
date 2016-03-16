@@ -1,3 +1,4 @@
+# coding: utf-8
 '''
 Created on 2016年3月10日
 
@@ -5,7 +6,7 @@ Created on 2016年3月10日
 '''
 
 from .rediscache import RedisCache
-from cache.exces import UnsupportedError
+from .exces import UnsupportedError, UninitializedError
 
 class CacheMgr(object):
     '''
@@ -14,17 +15,20 @@ class CacheMgr(object):
     __cache = None
 
     @classmethod
-    def init(cls, type, **configs):
+    def init(cls, logger, type, **configs):
         '''
             Init the cache mgr.
+            @param logger: logger instance for logging.
             @param type: 缓存类型，目前支持有"redis"
             @param configs: 针对此类型对应的配置
         '''
         if type == "redis":
-            __cache = RedisCache(**configs)
+            cls.__cache = RedisCache(logger, **configs)
         else:
             raise UnsupportedError()
     
     @classmethod
     def getCache(cls):
+        if cls.__cache is None:
+            raise UninitializedError()
         return cls.__cache

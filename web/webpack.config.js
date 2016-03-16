@@ -23,13 +23,13 @@ module.exports = {
         相当于"webpack --watch-poll"，用于解决虚拟机下inotify无法传递
         而导致无法监听的问题
     */
-    watchOptions: {
-        poll: true
-    },
+    // watchOptions: {
+    //     poll: true
+    // },
     /*
         相当于"webpack --watch", 监听资源状态。
     */
-    watch: true,
+    // watch: true,
     /* 
         相当于 "--module-bind 'css=style!css'"
     */

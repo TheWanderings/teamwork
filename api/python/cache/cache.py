@@ -14,11 +14,12 @@ class Cache(object):
         """
         raise
     
-    def _do_save_cache(self, key, value):
+    def _do_save_cache(self, key, value, timeout=None):
         """
             Save new value of the key.
             @param key: String.
             @param value: object value to save.
+            @param timeout: Expire time in second, None for forever.
         """
         raise
     
@@ -40,20 +41,21 @@ class Cache(object):
                 Value of the key; None if missing.
         """
         value = self._do_get_from_cache(key)
-        if value is None and not fetcher is None:
+        if value is None and fetcher is not None:
             value = fetcher(*args, **kwargs)
             if value is None:
                 return None
             self._do_save_cache(key, value)
         return value
             
-    def set(self, key, value):
+    def set(self, key, value, timeout=None):
         """
             Set value of key.
             @param key: String.
             @param value: object.
+            @param timeout: Expire time in second, None for forever.
         """
-        self._do_save_cache(key, value)
+        self._do_save_cache(key, value, timeout)
         
     def delete(self, key):
         """
