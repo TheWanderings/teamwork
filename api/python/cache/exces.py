@@ -11,3 +11,7 @@ class UnsupportedError(Exception):
 
 class UninitializedError(Exception):
     pass
+
+
+class ConnectionError(Exception):
+    pass

@@ -30,19 +30,30 @@ class Cache(object):
         """
         raise
     
-    def get(self, key, fetcher=None, *args, **kwargs):
+    def _do_list_keys(self, pattern):
+        """
+            List all of the keys matching the pattern.
+            @param pattern: pattern string for matching, None for all.
+            @return:
+                List of keys.
+        """
+        raise
+    
+    def get(self, key, fetcher=None, forceReload=False, **kwargs):
         """
             Get value of the @key, if there is no value, @fetcher will be called
             with @args and @kwargs for fetching the value. If no value fetched, 
             None will be returned.
             @param key: String.
             @param fetcher: Function, the method to fetch value if missing.
+            @param forceReload: True for forcing to reload data.
+            @param kwargs: KV args for fetcher.
             @return: 
                 Value of the key; None if missing.
         """
-        value = self._do_get_from_cache(key)
+        value = self._do_get_from_cache(key) if not forceReload else None
         if value is None and fetcher is not None:
-            value = fetcher(*args, **kwargs)
+            value = fetcher(**kwargs)
             if value is None:
                 return None
             self._do_save_cache(key, value)
@@ -57,9 +68,18 @@ class Cache(object):
         """
         self._do_save_cache(key, value, timeout)
         
-    def delete(self, key):
+    def delete(self, *keys):
         """
             Delete key from the cache.
-            @param key: String.
+            @param keys: list of keys.
         """
-        self._do_delete_cache(key)
+        self._do_delete_cache(*keys)
+        
+    def list_keys(self, pattern):
+        """
+            List all of the keys matching the pattern.
+            @param pattern: pattern string for matching, None for all.
+            @return:
+                List of keys.
+        """
+        return self._do_list_keys(pattern)
