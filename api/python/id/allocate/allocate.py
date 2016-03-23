@@ -33,8 +33,7 @@ class IdManage(object):
         redis_host = redis_conf.get("host", "localhost")
         redis_port = redis_conf.get("port", 6379)
 
-        pool = redis.ConnectionPool(host=redis_host, port=redis_port, db=0)
-        self.__redis_inst = redis.Redis(connection_pool=pool)
+        pool = redis.StrictRedis(host=redis_host, port=redis_port, db=0)
 
     def allocate_id(self, type, count):
         """
