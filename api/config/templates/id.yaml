@@ -1,0 +1,4 @@
+#id mng
+redis:
+    host: localhost
+    port: 6379
