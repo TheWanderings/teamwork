@@ -9,11 +9,12 @@ __purpose__ =
 import os
 
 import config
+import define
 from logs import LoggerMgr
 import redis
 
 
-class IdMng(object):
+class IdManage(object):
     """
     manage all database primary key id
     """
@@ -44,10 +45,8 @@ class IdMng(object):
         """
         id_list = None
         try:
-            if self.__redis_inst.exists(type):
-                start = int(self.__redis_inst.get(type))
-            else:
-                start = 1
+            value = self.__redis_inst.get(type)
+            start = int(value) if value else 1
             stop = start + count
             id_list = [x for x in xrange(start, stop)]
             self.__redis_inst.set(type, stop)
