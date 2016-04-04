@@ -49,6 +49,7 @@ class IdManage(object):
             stop = start + count
             id_list = [x for x in xrange(start, stop)]
             self.__redis_inst.set(type, stop)
+            self.__logger.info("{0} get {1} ids: {2}-{3}".format(type, count, id_list[0], id_list[-1]))
         except Exception, e:
             self.__logger.error("allocate id failed %s" % e)
 
