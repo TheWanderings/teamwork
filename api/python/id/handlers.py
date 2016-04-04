@@ -19,15 +19,18 @@ class AllocateHandler(BaseHandler):
         get database table primary key id
         :return: list
         """
+        type = self.get_argument("type")
+        if not type:
+            raise CustomHTTPError(400, "invalid argument: type")
         try:
-            type = self.get_argument("type")
-            count = self.get_argument("count")
-        except Exception, e:
-            raise CustomHTTPError(400, "invalid argument: %s" % e)
+            count = int(self.get_argument("count"))
+        except ValueError:
+            raise CustomHTTPError(400, "invalid argument: count")
         id_mng = IdManage()
         id_list = id_mng.allocate_id(type=type, count=count)
-        if id_list:
-            response = {
-                "data": id_list
-            }
-            self.write(response)
+
+        response = {
+            "data": id_list
+        }
+        self.write(response)
+

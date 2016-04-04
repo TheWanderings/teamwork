@@ -20,8 +20,8 @@ class IdManage(object):
     """
 
     def __init__(self):
-        self.__redis_inst = None
         self.__logger = LoggerMgr.getLogger()
+        self.__redis_inst = self.get_redis_inst()
 
     def get_redis_inst(self):
         """
@@ -33,7 +33,7 @@ class IdManage(object):
         redis_host = redis_conf.get("host", "localhost")
         redis_port = redis_conf.get("port", 6379)
 
-        pool = redis.StrictRedis(host=redis_host, port=redis_port, db=0)
+        return redis.StrictRedis(host=redis_host, port=redis_port, db=0)
 
     def allocate_id(self, type, count):
         """
@@ -45,13 +45,20 @@ class IdManage(object):
         id_list = None
         try:
             value = self.__redis_inst.get(type)
-            start = int(value) if value else 1
-            stop = start + count
-            id_list = [x for x in xrange(start, stop)]
+        except ConnectionError, e:
+            self.__logger.error("redis get failed %s" % e)
+            return None
+        start = int(value) if value else 1
+        stop = start + count
+        id_list = [x for x in xrange(start, stop)]
+
+        try:
             self.__redis_inst.set(type, stop)
             self.__logger.info("{0} get {1} ids: {2}-{3}".format(type, count, id_list[0], id_list[-1]))
-        except Exception, e:
-            self.__logger.error("allocate id failed %s" % e)
+        except ConnectionError, e:
+            self.__logger.error("redis set failed %s" % e)
+            return None
 
         return id_list
+
 
