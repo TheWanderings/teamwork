@@ -5,7 +5,3 @@ cache:
     type: redis
     host: localhost
     port: 6379
-
-redis:
-    host: localhost
-    port: 6379

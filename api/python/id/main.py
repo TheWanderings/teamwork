@@ -11,7 +11,7 @@ from tornado.options import options
 import env
 from config import ConfigMgr
 
-from .entries import entries
+from entries import entries
 from logs import LoggerMgr
 
 tornado.options.define('port',

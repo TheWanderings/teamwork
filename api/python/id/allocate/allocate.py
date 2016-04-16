@@ -45,7 +45,7 @@ class IdManage(object):
         id_list = None
         try:
             value = self.__redis_inst.get(type)
-        except ConnectionError, e:
+        except redis.ConnectionError, e:
             self.__logger.error("redis get failed %s" % e)
             return None
         start = int(value) if value else 1
@@ -55,7 +55,7 @@ class IdManage(object):
         try:
             self.__redis_inst.set(type, stop)
             self.__logger.info("{0} get {1} ids: {2}-{3}".format(type, count, id_list[0], id_list[-1]))
-        except ConnectionError, e:
+        except redis.ConnectionError, e:
             self.__logger.error("redis set failed %s" % e)
             return None
 
