@@ -1,15 +1,12 @@
-'''
-Created on 2016年2月18日
+# coding=utf-8
 
-@author: AilenZou
-'''
 
 import tornado.web
 from tornado.options import options
 import env
 from config import ConfigMgr
 
-from .entries import entries
+from entries import entries
 from logs import LoggerMgr
 
 tornado.options.define('port', 
