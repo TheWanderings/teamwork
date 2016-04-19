@@ -4,11 +4,12 @@ Created on 2016年2月18日
 
 @author: AilenZou
 '''
-import tornado.web
-import define
-from api.basehandler import BaseHandler, CustomHTTPError
 import re
 
+import tornado.web
+
+import define
+from api.basehandler import BaseHandler, CustomHTTPError
 from user.account.accountmgr import AccountMgr, CustomMgrError
 
 
@@ -19,6 +20,7 @@ class SelfHandler(BaseHandler):
 
 
 class RegisterHandler(BaseHandler):
+    # 应该用post，为了方便测试暂时用get
     def get(self, *args, **kwargs):
 
         email = self.get_argument("email")
@@ -47,14 +49,17 @@ class RegisterHandler(BaseHandler):
             raise CustomHTTPError(409, e.message)  # 不确定该用哪个code，502比较符合规则，但是前端接受不到原因
 
 
-
-
-
 class LoginHandler(BaseHandler):
-    def post(self):
+    def get(self):
         email = self.get_argument("email")
         password = self.get_argument("password")
-        # raise CustomHTTPError(401,
-        #                       define.C_EC_wrongPassword,
-        #                       cause=define.C_CAUSE_userMissing
-        #                       )
+        info = {
+            "email": email,
+            "password": password,
+        }
+        try:
+            user_mgr = AccountMgr(session=self.db_session)
+            if not user_mgr.login(**info):
+                raise CustomHTTPError(401, error=define.C_EC_auth, cause=define.C_CAUSE_wrongPassword)
+        except CustomMgrError, e:
+            raise CustomHTTPError(401, error=define.C_EC_auth,  cause=define.C_CAUSE_accountNotExisted)

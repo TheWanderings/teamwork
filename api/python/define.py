@@ -21,3 +21,6 @@ C_CAUSE_userMissing = "userMissing"
 C_CAUSE_wrongPassword = "wrongPassword"
 C_CAUSE_authError = "authError"
 C_CAUSE_cookieMissing = "cookieMissing"
+
+C_CAUSE_accountExisted = "accountExisted"
+C_CAUSE_accountNotExisted = "accountNotExisted"

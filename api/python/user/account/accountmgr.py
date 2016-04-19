@@ -43,7 +43,7 @@ class AccountMgr(object):
         :param kwargs:
         :return:
         """
-        id = self.get_id(User.__tablename__)
+        id = self.__get_id(User.__tablename__)
         if not id:
             return None
         kwargs["uid"] = id
@@ -66,10 +66,8 @@ class AccountMgr(object):
             else:
                 conflict = msg
             raise CustomMgrError(conflict)
-        except Exception, e:
-            raise CustomMgrError(e.message)
 
-    def get_id(self, db_name):
+    def __get_id(self, db_name):
         """
         get primary id for db table
         :param db_name:
@@ -91,3 +89,20 @@ class AccountMgr(object):
                     AccountMgr.__ids[db_name] = ids = result["data"]
 
         return ids.pop() if ids else None
+
+    def login(self, **kwargs):
+        """
+        user login
+        :param kwargs:
+        :return:
+        """
+        result = self.__seesion.query(User.password).filter(User.email == kwargs["email"]).first()
+        if result is None:
+            raise CustomMgrError(define.C_CAUSE_accountNotExisted)
+        m = hashlib.md5()
+        m.update(kwargs["password"])
+        encryopted_password = m.hexdigest()
+        if result.password == encryopted_password:
+            return True
+        else:
+            return False
