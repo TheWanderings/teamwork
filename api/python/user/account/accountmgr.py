@@ -10,6 +10,7 @@ import os
 # from _mysql_exceptions import InterfaceError, IntegrityError
 import re
 
+import redis
 import requests
 
 import config
@@ -96,7 +97,7 @@ class AccountMgr(object):
         :param kwargs:
         :return:
         """
-        result = self.__seesion.query(User.password).filter(User.email == kwargs["email"]).first()
+        result = self.__seesion.query(User.password).filter(User.email == kwargs["user_name"]).first()
         if result is None:
             raise CustomMgrError(define.C_CAUSE_accountNotExisted)
         m = hashlib.md5()
@@ -106,3 +107,44 @@ class AccountMgr(object):
             return True
         else:
             return False
+
+    def cookie_cache(self, **kwargs):
+        """
+        save cookie in redis
+        :param kwargs:
+        :return:
+        """
+        try:
+            redis_inst = self.get_redis_inst()
+            redis_inst.set(kwargs["user_name"], kwargs["cookie"])
+        except redis.ConnectionError, e:
+            self.__logger.error(e)
+            raise CustomMgrError(define.C_CAUSE_setKeyError)
+
+    def cookie_auth(self, **kwargs):
+        """
+        和redis里缓存的cookie匹配
+        :param kwargs:
+        :return:
+        """
+        try:
+            redis_inst = self.get_redis_inst()
+            cookie = redis_inst.get(kwargs["user_name"])
+            if cookie == kwargs["cookie"]:
+                return True
+            return False
+        except redis.ConnectionError, e:
+            self.__logger.error(e)
+            raise CustomMgrError(define.C_CAUSE_getKeyError)
+
+    def get_redis_inst(self):
+        """
+        get a redis instance
+        :return:
+        """
+        config.ConfigMgr.init(os.path.join(define.root, "config/user.yaml"))
+        redis_conf = config.ConfigMgr.get("redis", {})
+        redis_host = redis_conf.get("host", "localhost")
+        redis_port = redis_conf.get("port", 6379)
+
+        return redis.StrictRedis(host=redis_host, port=redis_port, db=0)

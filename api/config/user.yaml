@@ -1,4 +1,6 @@
-#id mng
+#user
+cookie_secret: JIaCjeGlSsqGUkfjPQNVAHPTGCqhBkxOrboesVT4zGE=
+
 redis:
     host: localhost
     port: 6379
@@ -13,4 +15,10 @@ mysql:
 id_server:
     host: localhost
     port: 8800
-    tbl_user_req_num: 5
+    # 一次返回多少个ID
+    tbl_user_req_num: 2
+
+user_server:
+    host: localhost
+    port: 8801
+

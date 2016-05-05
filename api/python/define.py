@@ -15,6 +15,7 @@ root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 C_EC_auth = "authError"
 C_EC_wrongPassword = "wrongPassword"
 C_EC_userMissing = "userMissing"
+C_EC_cacheError = "cacheError"
 
 # Error cause
 C_CAUSE_userMissing = "userMissing"
@@ -24,3 +25,6 @@ C_CAUSE_cookieMissing = "cookieMissing"
 
 C_CAUSE_accountExisted = "accountExisted"
 C_CAUSE_accountNotExisted = "accountNotExisted"
+
+C_CAUSE_setKeyError = "setKeyError"
+C_CAUSE_getKeyError = "getKeyError"

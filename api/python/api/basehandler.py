@@ -5,7 +5,10 @@ Created on 2016年2月18日
 @author: AilenZou
 '''
 import os
+
+import requests
 import tornado.web
+import tornado.httpclient
 
 import config
 import define
@@ -36,10 +39,22 @@ class BaseHandler(tornado.web.RequestHandler):
         return self.__session
     
     def get_current_user(self):
-        cookie = self.get_secure_cookie(self.C_COOKIE)
-        if not cookie:
+        user_name = self.get_secure_cookie(self.C_COOKIE)
+        if not user_name:
             raise CustomHTTPError(401, define.C_EC_auth, cause=define.C_CAUSE_cookieMissing)
-        # TODO
+        cookie = self.get_cookie(self.C_COOKIE)
+
+        config.ConfigMgr.init(os.path.join(define.root, "config/user.yaml"))
+        server_conf = config.ConfigMgr.get("user_server", {})
+        url = "http://{host}:{port}/cookie_auth".format(**server_conf)
+        payload = {
+            "user_name": user_name,
+            "cookie": cookie,
+        }
+        response = requests.get(url=url, params=payload)
+        if response.status_code == 200:
+            return True
+        return False
     
     def write_error(self, status_code, **kwargs):
         if status_code >= 500:
