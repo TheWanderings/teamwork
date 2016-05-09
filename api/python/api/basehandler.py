@@ -26,34 +26,32 @@ class BaseHandler(tornado.web.RequestHandler):
     C_COOKIE = "cookie"
 
     def initialize(self):
-        self.__session = None
+        self.__db_session = None
 
     def on_finish(self, chunk=None):
-        if self.__session:
-            self.__session.close()
+        if self.__db_session:
+            self.__db_session.close()
 
     @property
     def db_session(self):
-        if self.__session is None:
-            self.__session = self.__get_db_session()
-        return self.__session
+        if self.__db_session is None:
+            self.__db_session = self.__get_db_session()
+        return self.__db_session
     
     def get_current_user(self):
-        user_name = self.get_secure_cookie(self.C_COOKIE)
-        if not user_name:
+        cookie = self.get_secure_cookie(self.C_COOKIE)
+        if not cookie:
             raise CustomHTTPError(401, define.C_EC_auth, cause=define.C_CAUSE_cookieMissing)
-        cookie = self.get_cookie(self.C_COOKIE)
 
         config.ConfigMgr.init(os.path.join(define.root, "config/user.yaml"))
         server_conf = config.ConfigMgr.get("user_server", {})
         url = "http://{host}:{port}/cookie_auth".format(**server_conf)
         payload = {
-            "user_name": user_name,
             "cookie": cookie,
         }
         response = requests.get(url=url, params=payload)
         if response.status_code == 200:
-            return True
+            return response.text
         return False
     
     def write_error(self, status_code, **kwargs):

@@ -4,6 +4,8 @@ cookie_secret: JIaCjeGlSsqGUkfjPQNVAHPTGCqhBkxOrboesVT4zGE=
 redis:
     host: localhost
     port: 6379
+    # cookie过期时间，10天
+    cookie_expire: 864000
 
 mysql:
     host: localhost

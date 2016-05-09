@@ -28,3 +28,4 @@ C_CAUSE_accountNotExisted = "accountNotExisted"
 
 C_CAUSE_setKeyError = "setKeyError"
 C_CAUSE_getKeyError = "getKeyError"
+C_CAUSE_delKeyError = "delKeyError"

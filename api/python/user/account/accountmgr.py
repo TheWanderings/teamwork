@@ -7,9 +7,6 @@ import hashlib
 import json
 import os
 
-# from _mysql_exceptions import InterfaceError, IntegrityError
-import re
-
 import redis
 import requests
 
@@ -34,9 +31,22 @@ class AccountMgr(object):
     """
     __ids = {}
 
-    def __init__(self, session=None):
-        self.__seesion = session
+    def __init__(self, db_session=None):
+        self.__db_session = db_session
         self.__logger = LoggerMgr.getLogger()
+
+    def get_redis_inst(self):
+        """
+        get a redis instance
+        :return:
+        """
+        config.ConfigMgr.init(os.path.join(define.root, "config/user.yaml"))
+        redis_conf = config.ConfigMgr.get("redis", {})
+        redis_host = redis_conf.get("host", "localhost")
+        redis_port = redis_conf.get("port", 6379)
+
+        return redis.StrictRedis(host=redis_host, port=redis_port, db=0)
+
 
     def register(self, **kwargs):
         """
@@ -54,16 +64,18 @@ class AccountMgr(object):
         kwargs["password"] = m.hexdigest()
         user = User(**kwargs)
         try:
-            self.__seesion.add(user)
-            self.__seesion.commit()
+            self.__db_session.add(user)
+            self.__db_session.commit()
             self.__logger.info("add a user: {account}".format(**kwargs))
         except IntegrityError, e:
             msg = e.message
             # 从异常里找出是账号冲突还是邮箱冲突
             if msg.find("account") > 0:
                 conflict = "account has existed"
+                self.__logger.warning("{0}:{1}".format(conflict, kwargs["account"]))
             elif msg.find("email") > 0:
                 conflict = "email has existed"
+                self.__logger.warning("{0}:{1}".format(conflict, kwargs["email"]))
             else:
                 conflict = msg
             raise CustomMgrError(conflict)
@@ -87,6 +99,7 @@ class AccountMgr(object):
                 result = json.loads(response.text)
                 if result.get("data", None):
                     result["data"].reverse()
+                    self.__logger.info("{0} get primary id {1}".format(db_name, result))
                     AccountMgr.__ids[db_name] = ids = result["data"]
 
         return ids.pop() if ids else None
@@ -97,7 +110,7 @@ class AccountMgr(object):
         :param kwargs:
         :return:
         """
-        result = self.__seesion.query(User.password).filter(User.email == kwargs["user_name"]).first()
+        result = self.__db_session.query(User.password).filter(User.email == kwargs["user_name"]).first()
         if result is None:
             raise CustomMgrError(define.C_CAUSE_accountNotExisted)
         m = hashlib.md5()
@@ -106,6 +119,7 @@ class AccountMgr(object):
         if result.password == encryopted_password:
             return True
         else:
+            self.__logger.info("{0} login failed with wrong password".format(kwargs["user_name"]))
             return False
 
     def cookie_cache(self, **kwargs):
@@ -116,7 +130,14 @@ class AccountMgr(object):
         """
         try:
             redis_inst = self.get_redis_inst()
-            redis_inst.set(kwargs["user_name"], kwargs["cookie"])
+            value = kwargs.copy()
+            value.pop("cookie")
+            value = json.dumps(value)
+            config.ConfigMgr.init(os.path.join(define.root, "config/user.yaml"))
+            conf = config.ConfigMgr.get("redis", {})
+            # cookie过期时间
+            cookie_expire = conf.get("cookie_expire", 864000)
+            redis_inst.set(kwargs["cookie"], value, px=int(cookie_expire))
         except redis.ConnectionError, e:
             self.__logger.error(e)
             raise CustomMgrError(define.C_CAUSE_setKeyError)
@@ -129,22 +150,20 @@ class AccountMgr(object):
         """
         try:
             redis_inst = self.get_redis_inst()
-            cookie = redis_inst.get(kwargs["user_name"])
-            if cookie == kwargs["cookie"]:
-                return True
-            return False
+            value = redis_inst.get(kwargs["cookie"])
+            if value:
+                config.ConfigMgr.init(os.path.join(define.root, "config/user.yaml"))
+                conf = config.ConfigMgr.get("redis", {})
+                # cookie过期时间
+                cookie_expire = conf.get("cookie_expire", 864000)
+                redis_inst.expire(kwargs["cookie"], cookie_expire)
+            return json.loads(value)
         except redis.ConnectionError, e:
             self.__logger.error(e)
             raise CustomMgrError(define.C_CAUSE_getKeyError)
 
-    def get_redis_inst(self):
-        """
-        get a redis instance
-        :return:
-        """
-        config.ConfigMgr.init(os.path.join(define.root, "config/user.yaml"))
-        redis_conf = config.ConfigMgr.get("redis", {})
-        redis_host = redis_conf.get("host", "localhost")
-        redis_port = redis_conf.get("port", 6379)
+    def cookie_delete(self, cookie):
+        redis_inst = self.get_redis_inst()
+        redis_inst.delete(cookie)
+        self.__logger.info("delete cooike from redis {0}".format(cookie))
 
-        return redis.StrictRedis(host=redis_host, port=redis_port, db=0)
