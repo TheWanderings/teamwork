@@ -30,6 +30,7 @@ class AccountMgr(object):
     account manage
     """
     __ids = {}
+    config.ConfigMgr.init(os.path.join(define.root, "config/user.yaml"))
 
     def __init__(self, db_session=None):
         self.__db_session = db_session
@@ -40,13 +41,11 @@ class AccountMgr(object):
         get a redis instance
         :return:
         """
-        config.ConfigMgr.init(os.path.join(define.root, "config/user.yaml"))
         redis_conf = config.ConfigMgr.get("redis", {})
         redis_host = redis_conf.get("host", "localhost")
         redis_port = redis_conf.get("port", 6379)
 
         return redis.StrictRedis(host=redis_host, port=redis_port, db=0)
-
 
     def register(self, **kwargs):
         """
@@ -88,13 +87,16 @@ class AccountMgr(object):
         """
         ids = AccountMgr.__ids.get(db_name, None)
         if not ids:
-            config.ConfigMgr.init(os.path.join(define.root, "config/user.yaml"))
             conf = config.ConfigMgr.get("id_server", {})
             # host = conf.get("host", "localhost")
             # port = conf.get("port", "10000")
             payload = {"type": db_name, "count": int(conf.get("{0}_req_num".format(db_name), 5)),}
             url = "http://{host}:{port}/allocate".format(**conf)
-            response = requests.get(url=url, params=payload)
+            try:
+                response = requests.get(url=url, params=payload)
+            except requests.ConnectionError, e:
+                raise CustomMgrError("id allocate server exception")
+
             if response.status_code == 200:
                 result = json.loads(response.text)
                 if result.get("data", None):
@@ -110,17 +112,17 @@ class AccountMgr(object):
         :param kwargs:
         :return:
         """
-        result = self.__db_session.query(User.password).filter(User.email == kwargs["user_name"]).first()
+        result = self.__db_session.query(User.password, User.uid).filter(User.email == kwargs["user_name"]).first()
         if result is None:
             raise CustomMgrError(define.C_CAUSE_accountNotExisted)
         m = hashlib.md5()
         m.update(kwargs["password"])
         encryopted_password = m.hexdigest()
         if result.password == encryopted_password:
-            return True
+            return result.uid
         else:
-            self.__logger.info("{0} login failed with wrong password".format(kwargs["user_name"]))
-            return False
+            self.__logger.warning("{0} login failed with wrong password".format(kwargs["user_name"]))
+            return None
 
     def cookie_cache(self, **kwargs):
         """
@@ -133,7 +135,6 @@ class AccountMgr(object):
             value = kwargs.copy()
             value.pop("cookie")
             value = json.dumps(value)
-            config.ConfigMgr.init(os.path.join(define.root, "config/user.yaml"))
             conf = config.ConfigMgr.get("redis", {})
             # cookie过期时间
             cookie_expire = conf.get("cookie_expire", 864000)
@@ -152,18 +153,45 @@ class AccountMgr(object):
             redis_inst = self.get_redis_inst()
             value = redis_inst.get(kwargs["cookie"])
             if value:
-                config.ConfigMgr.init(os.path.join(define.root, "config/user.yaml"))
                 conf = config.ConfigMgr.get("redis", {})
                 # cookie过期时间
                 cookie_expire = conf.get("cookie_expire", 864000)
                 redis_inst.expire(kwargs["cookie"], cookie_expire)
-            return json.loads(value)
+                return json.loads(value)
         except redis.ConnectionError, e:
             self.__logger.error(e)
             raise CustomMgrError(define.C_CAUSE_getKeyError)
 
     def cookie_delete(self, cookie):
+        """
+        delete cookie for logout
+        :param cookie:
+        :return:
+        """
         redis_inst = self.get_redis_inst()
         redis_inst.delete(cookie)
         self.__logger.info("delete cooike from redis {0}".format(cookie))
+
+    def get_user_info(self, uid):
+        """
+        get user info
+        :param user_name:
+        :return:
+        """
+        result = self.__db_session.query(User.account, User.email, User.uid, User.create_time, User.image).\
+            filter(User.uid == uid).first()
+
+        if result:
+            response = {
+                "uid": result.uid,
+                "account": result.account,
+                "email": result.email,
+                "create_time": str(result.create_time),
+                "image": result.image,
+            }
+        else:
+            response = None
+
+        return response
+
 

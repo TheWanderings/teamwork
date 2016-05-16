@@ -90,7 +90,8 @@ class LoginHandler(UserBaseHandler):
         }
         try:
             user_mgr = AccountMgr(db_session=self.db_session)
-            if not user_mgr.login(**info):
+            uid = user_mgr.login(**info)
+            if not uid:
                 raise CustomHTTPError(401, error=define.C_EC_auth, cause=define.C_CAUSE_wrongPassword)
         except CustomMgrError, e:
             raise CustomHTTPError(401, error=define.C_EC_auth, cause=define.C_CAUSE_accountNotExisted)
@@ -99,6 +100,7 @@ class LoginHandler(UserBaseHandler):
         self.set_secure_cookie(self.C_COOKIE, rand_str)
         info["cookie"] = rand_str  # self.get_secure_cookie(self.C_COOKIE)
         try:
+            info["uid"] = uid
             info.pop("password")
             user_mgr.cookie_cache(**info)
         except CustomMgrError, e:
@@ -122,12 +124,12 @@ class UserInfoHandler(UserBaseHandler):
     """
     获取用户信息
     """
-
     @tornado.web.authenticated
     def get(self):
-        print "okkkke"
-        # user_name = self.get_argument("user_name")
-        pass
-        self.write({
-            "cause": "very good"
-        })
+        user = self.get_current_user()
+        user_name = user.get("uid")
+        user_mgr = AccountMgr(db_session=self.db_session)
+        user_info = user_mgr.get_user_info(user_name)
+        if not user_info:
+            raise CustomHTTPError(401, error=define.C_EC_userMissing, cause=define.C_CAUSE_accountNotExisted)
+        self.write(user_info)
