@@ -194,4 +194,46 @@ class AccountMgr(object):
 
         return response
 
+    def modify_password(self, uid, old_password, new_password):
+        """
+        modify user password
+        :param old_password:
+        :param uid:
+        :return:
+        """
+        result = self.__db_session.query(User.password).filter(User.uid == uid).first()
+        if result is None:
+            raise CustomMgrError(define.C_CAUSE_accountNotExisted)
+        m = hashlib.md5()
+        m.update(old_password)
+        encryopted_password = m.hexdigest()
+        if result.password == encryopted_password:
+            m.update(new_password)
+            encryopted_password = m.hexdigest()
+            result.password = encryopted_password
+        else:
+            self.__logger.warning("{0} modify password failed with wrong password".format(uid))
+            raise CustomMgrError(define.C_CAUSE_wrongPassword)
 
+    def reset_password(self, email, new_password):
+        """
+        reset password when forget password
+        :param new_password:
+        :param email:
+        :return:
+        """
+        result = self.__db_session.query(User.email).filter(User.email == email).first()
+        if result is None:
+            raise CustomMgrError(define.C_CAUSE_accountNotExisted)
+        m = hashlib.md5()
+        m.update(new_password)
+        encryopted_password = m.hexdigest()
+        User.email = encryopted_password
+
+    def send_email_url(self, email):
+        """
+        send a email to reset password
+        :param email:
+        :return:
+        """
+        pass

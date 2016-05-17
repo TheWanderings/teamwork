@@ -5,7 +5,8 @@ Created on 2016年2月18日
 @author: AilenZou
 '''
 
-from user.handlers import LoginHandler, RegisterHandler, CookieAuthHandler, UserInfoHandler, LogoutHandler
+from user.handlers import LoginHandler, RegisterHandler, CookieAuthHandler, UserInfoHandler, \
+    LogoutHandler, ModifyPasswordHandler, ResetPasswordHandler, SendMailHandler
 
 entries = [
     # account
@@ -14,5 +15,8 @@ entries = [
     (r"/cookie_auth$", CookieAuthHandler),
     (r"/logout$", LogoutHandler),
     (r"/user_info$", UserInfoHandler),
+    (r"/modify_psw$", ModifyPasswordHandler),
+    (r"/reset_psw$", ResetPasswordHandler),
+    (r"/send_mail_addr$", SendMailHandler),
 
 ]
