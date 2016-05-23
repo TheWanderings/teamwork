@@ -16,6 +16,7 @@ C_EC_auth = "authError"
 C_EC_wrongPassword = "wrongPassword"
 C_EC_userMissing = "userMissing"
 C_EC_cacheError = "cacheError"
+C_EC_emailError = "emailError"
 
 # Error cause
 C_CAUSE_userMissing = "userMissing"
@@ -29,3 +30,6 @@ C_CAUSE_accountNotExisted = "accountNotExisted"
 C_CAUSE_setKeyError = "setKeyError"
 C_CAUSE_getKeyError = "getKeyError"
 C_CAUSE_delKeyError = "delKeyError"
+
+C_CAUSE_sendError = "sendError"
+C_CAUSE_invalidUrl = "invalidUrl"

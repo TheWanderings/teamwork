@@ -3,9 +3,11 @@
 user manager
 @david
 """
+import base64
 import hashlib
 import json
 import os
+import uuid
 
 import redis
 import requests
@@ -15,6 +17,7 @@ import define
 from logs import LoggerMgr
 from user.db.dbclass import User
 from sqlalchemy.exc import IntegrityError
+import yagmail
 
 
 class CustomMgrError(Exception):
@@ -46,6 +49,45 @@ class AccountMgr(object):
         redis_port = redis_conf.get("port", 6379)
 
         return redis.StrictRedis(host=redis_host, port=redis_port, db=0)
+
+    def send_email(self, subject, contents, send_to=None, **kwargs):
+        """
+        send email, by default, use email info in config file, if you want use personal email,
+        use kwargs like:
+        kwargs = {
+            "user": xxxx,
+            "password", xxxx,
+            "host": xxx,
+            "to":xxx,
+            "cc":xxx # a list or str
+        }
+        :param subject:
+        :param contents:
+        :param kwargs:
+        :return:
+        """
+        if kwargs:
+            user = kwargs.get("user")
+            password = kwargs.get("password")
+            host = kwargs.get("host")
+            to = kwargs.get("to")
+            cc = kwargs.get("cc", None)
+        else:
+            conf = config.ConfigMgr.get("email", {})
+            user = conf.get("user")
+            password = conf.get("password")
+            host = conf.get("host")
+            to = conf.get("to")
+            cc = conf.get("cc", "")
+            if cc:
+                cc = cc.split(",")
+
+        if send_to is not None:
+            to = send_to
+        to = to.encode("utf-8")
+        yag = yagmail.SMTP(user=user, password=password, host=host)
+        yag.send(to=to, subject=subject, contents=contents, cc=cc)
+
 
     def register(self, **kwargs):
         """
@@ -175,7 +217,7 @@ class AccountMgr(object):
     def get_user_info(self, uid):
         """
         get user info
-        :param user_name:
+        :param uid:
         :return:
         """
         result = self.__db_session.query(User.account, User.email, User.uid, User.create_time, User.image).\
@@ -197,6 +239,7 @@ class AccountMgr(object):
     def modify_password(self, uid, old_password, new_password):
         """
         modify user password
+        :param new_password:
         :param old_password:
         :param uid:
         :return:
@@ -230,10 +273,42 @@ class AccountMgr(object):
         encryopted_password = m.hexdigest()
         User.email = encryopted_password
 
+    def check_reset_pws_url(self, email, key):
+        """
+        check url
+        :param key:
+        :param email:
+        :return:
+        """
+        redis_inst = self.get_redis_inst()
+        _key = redis_inst.get(email)
+        if _key != key:
+            self.__logger.error("url key error {0} != {1}".format(_key, key))
+            raise CustomMgrError("invalid url")
+
     def send_email_url(self, email):
         """
         send a email to reset password
         :param email:
         :return:
         """
-        pass
+        rand_str = base64.b64encode(uuid.uuid4().bytes)
+        m = hashlib.md5()
+        m.update(rand_str)
+        key = m.hexdigest()
+        redis_inst = self.get_redis_inst()
+        redis_inst.set(email, key, px=600)
+        # keys = redis_inst.keys("*")
+
+        conf = config.ConfigMgr.get("user_server", {})
+        url = "http://{host}:{port}/reset_psw?key={0}&email={1}".format(key, email, **conf)
+        content = "请勿回复本邮件.点击下面的链接,重设密码<br/><a href=" + url + " target='_BLANK'>点击我重新设置密码</a>" \
+                       + "<br/>tips:本邮件超过30分钟,链接将会失效，需要重新申请'找回密码'"
+        subject = "teamwork 找回密码"
+
+        try:
+            self.send_email(subject=subject, contents=content, send_to=email)
+            self.__logger.info("send a url:{0} to email successfully".format(url))
+        except Exception, e:
+            self.__logger.exception("send url:{0} failed".format(url))
+            raise CustomMgrError("send url email failed")

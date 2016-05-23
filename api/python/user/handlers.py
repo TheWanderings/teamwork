@@ -155,8 +155,7 @@ class ResetPasswordHandler(UserBaseHandler):
     """
     reset password
     """
-
-    def get(self):
+    def post(self):
         email = self.get_argument("email")
         new_password = self.get_argument("new_password")
         try:
@@ -164,6 +163,17 @@ class ResetPasswordHandler(UserBaseHandler):
             user_mgr.reset_password(email=email, new_password=new_password)
         except CustomMgrError, e:
             raise CustomHTTPError(401, error=define.C_EC_userMissing, cause=define.C_CAUSE_userMissing)
+
+    def get(self):
+        email = self.get_argument("email")
+        key = self.get_argument("key")
+        try:
+            user_mgr = AccountMgr()
+            user_mgr.check_reset_pws_url(email=email, key=key)
+        except CustomMgrError, e:
+            raise CustomHTTPError(401, error=define.C_EC_emailError, cause=define.C_CAUSE_invalidUrl)
+
+
 
 
 class SendMailHandler(UserBaseHandler):
@@ -176,4 +186,4 @@ class SendMailHandler(UserBaseHandler):
             user_mgr = AccountMgr(db_session=self.db_session)
             user_mgr.send_email_url(email=email)
         except CustomMgrError, e:
-            raise CustomHTTPError(401, error=define.C_EC_userMissing, cause=define.C_CAUSE_userMissing)
+            raise CustomHTTPError(401, error=define.C_EC_emailError, cause=define.C_CAUSE_sendError)

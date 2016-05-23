@@ -27,7 +27,7 @@ if __name__ == '__main__':
         'cookie_secret': ConfigMgr.get("cookie_secret"),
         "template_path":  "../../../web",
         "static_path":  r"F:\vagrant\workspace\teamwork\web",
-        "debug": True,
+        # "debug": True,
     }
     
     application = tornado.web.Application(entries, **settings)
