@@ -180,7 +180,7 @@ class AccountMgr(object):
             conf = config.ConfigMgr.get("redis", {})
             # cookie过期时间
             cookie_expire = conf.get("cookie_expire", 864000)
-            redis_inst.set(kwargs["cookie"], value, px=int(cookie_expire))
+            redis_inst.set(kwargs["cookie"], value, ex=int(cookie_expire))
         except redis.ConnectionError, e:
             self.__logger.error(e)
             raise CustomMgrError(define.C_CAUSE_setKeyError)
@@ -297,8 +297,7 @@ class AccountMgr(object):
         m.update(rand_str)
         key = m.hexdigest()
         redis_inst = self.get_redis_inst()
-        redis_inst.set(email, key, px=600)
-        # keys = redis_inst.keys("*")
+        redis_inst.set(email, key, ex=600)
 
         conf = config.ConfigMgr.get("user_server", {})
         url = "http://{host}:{port}/reset_psw?key={0}&email={1}".format(key, email, **conf)

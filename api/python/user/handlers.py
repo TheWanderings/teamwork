@@ -173,7 +173,7 @@ class ResetPasswordHandler(UserBaseHandler):
         except CustomMgrError, e:
             raise CustomHTTPError(401, error=define.C_EC_emailError, cause=define.C_CAUSE_invalidUrl)
 
-
+        self.redirect("/static/test/index.html")
 
 
 class SendMailHandler(UserBaseHandler):
@@ -187,3 +187,4 @@ class SendMailHandler(UserBaseHandler):
             user_mgr.send_email_url(email=email)
         except CustomMgrError, e:
             raise CustomHTTPError(401, error=define.C_EC_emailError, cause=define.C_CAUSE_sendError)
+

@@ -3,7 +3,7 @@ cookie_secret: JIaCjeGlSsqGUkfjPQNVAHPTGCqhBkxOrboesVT4zGE=
 
 redis:
     host: localhost
-    port: 6379
+    port: 6380
     # cookie过期时间，10天
     cookie_expire: 864000
 
